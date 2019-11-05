@@ -9,8 +9,8 @@ import time
 import random
 
 # 0.1 second ahead
-BUY_TIME = "2019-11-04 19:59:59.90"
-#BUY_TIME = "2019-11-04 16:32:59.90"
+BUY_TIME = "2019-11-05 19:59:59.90"
+#BUY_TIME = "2019-11-05 16:56:59.90"
 buy_time = datetime.strptime(BUY_TIME, '%Y-%m-%d %H:%M:%S.%f')
 chromedriver_path = os.path.join(os.path.dirname(__file__), 'chromedriver.exe')
 
@@ -46,21 +46,20 @@ def login(driver, max_retries = 2):
         return True
 
 
-def __refresh_keep_alive(driver):
+def __refresh_keep_alive(driver,max):
 
     driver.get("https://cart.taobao.com/cart.htm")
-    t = random.randint(1,90)
-    t += 60
+    t = random.randint(1,max)
+    t += 40
     print("Reload page before sleep {} sec".format(str(t)))
     time.sleep(t)
-
 
 def keep_login_and_wait(driver):
 
     while True:
         currentTime = datetime.now()
-        if (buy_time - currentTime).seconds > 180:
-            __refresh_keep_alive(driver)
+        if (buy_time - currentTime).seconds > 60:
+            __refresh_keep_alive(driver, 5)
         else:
             print("Close to buy time, stop reloading and wait")
             break
@@ -68,11 +67,13 @@ def keep_login_and_wait(driver):
 def buy(driver):
     #get the cart
     driver.get("https://cart.taobao.com/cart.htm")
-    time.sleep(1 + random.randint(2,5))
-    time.sleep(0.33)
+    time.sleep(random.randint(1,3))
+
 
     driver.find_element_by_id("J_SelectAll1").click()
     print("targets are selected in cart ")
+    time.sleep(1.33)
+    submit = driver.find_element_by_id("J_Go")
 
     # prepare submit button prepare
     button = EC.presence_of_element_located((By.CLASS_NAME, 'go-btn'))
@@ -85,13 +86,15 @@ def buy(driver):
             break
 
     start = datetime.now()
-    driver.find_element_by_id("J_Go").click()
+    submit.click()
+    #driver.refresh()
     req_sent = datetime.now()
     try:
         # i find it takes more than 0.1 second to analysis a page, so poll_frequency is setting to 0.12
-        element = WebDriverWait(driver, timeout=3, poll_frequency=0.12).until(button)
+        #element = WebDriverWait(driver, timeout=3, poll_frequency=0.12).until(button)
+        WebDriverWait(driver, timeout=3, poll_frequency=0.12).until(button)
         found = datetime.now()
-        element.click()
+        driver.execute_script("document.querySelector(\"[class='go-btn']\").click();")
         click = datetime.now()
     except TimeoutException:
         print("Loading took too much time!")
@@ -120,6 +123,12 @@ if __name__ == "__main__":
     option.add_argument('log-level=0')
 
     driver = webdriver.Chrome(executable_path=chromedriver_path, options=option)
+
+    driver.set_network_conditions(
+        offline=False,
+        latency=0,  # additional latency (ms)
+        throughput=500 * 1024)  # maximal throughput
+
     print("chrome browser ready...")
     if login(driver, 1):
         keep_login_and_wait(driver)
