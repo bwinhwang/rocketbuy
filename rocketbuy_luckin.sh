@@ -34,9 +34,9 @@ done
 date +%M:%S:%N
 
 ############################HHMMSSNNNNNNNNN
-while [ `date +%M%S%N` -lt    5959800000000 ]
+while [ `date +%M%S%N` -lt    5959750000000 ]
 do 
-sleep 0.1
+sleep 0.05
 done
 date +%M:%S:%N
 

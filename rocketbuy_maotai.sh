@@ -23,6 +23,21 @@ function order()
 }
 
 date +%H:%M:%S:%N
+
+
+##############################HHMMSSNNNNNNNNN
+while [[ `date +%H%M%S%N` -lt 194500000000000 ]]
+do 
+date +%M:%S
+sec=$(random 60 600)
+echo "sleep $sec"
+sleep $sec
+submit
+sleep $(random 10 10)
+back
+done
+
+date +%M:%S:%N
 ##############################HHMMSSNNNNNNNNN
 while [[ `date +%H%M%S%N` -lt 195950500000000 ]]
 do 
