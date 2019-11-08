@@ -1,42 +1,64 @@
 #!/bin/bash
 
-date +%M:%S:%N
-############################MMSSNNNNNNNNN
-while [[ `date +%M%S%N` -lt 5950500000000 ]]
+function tap()
+{
+X=$1
+Y=$2
+adb -s 458fefb shell "sendevent /dev/input/event2 3 58 1000 ;sendevent /dev/input/event2 3 53 ${X};sendevent /dev/input/event2 3 54 ${Y};sendevent /dev/input/event2 1 330 1 ;sendevent /dev/input/event2 0 0 0;sendevent /dev/input/event2 1 330 0;sendevent /dev/input/event2 0 0 0"
+}
+
+function submit()
+{
+    tap 800 2100
+}
+
+function back()
+{
+    tap 100 200
+}
+
+function order()
+{
+    tap 800 2300
+}
+
+date +%H:%M:%S:%N
+##############################HHMMSSNNNNNNNNN
+while [[ `date +%H%M%S%N` -lt 195950500000000 ]]
 do 
 sleep 1
 date +%M:%S
-time adb -s 458fefb shell input tap 1 1
+time tap 1 1
 done
 date +%M:%S:%N
 
 ############################MMSSNNNNNNNNN
 while [[ `date +%M%S%N` -lt 5953000000000 ]]
 do 
-adb -s 458fefb shell input tap 800 2100
+submit
 sleep 2
-adb -s 458fefb shell input tap 80 200
+back
 done
 date +%M:%S:%N
 
 ############################MMSSNNNNNNNNN
-while [[ `date +%M%S%N` -lt 5959400000000 ]]
+while [[ `date +%M%S%N` -lt 5959750000000 ]]
 do 
-sleep 0.1
+sleep 0.05
 done
 date +%M:%S:%N
 
 # submit from cart
-adb -s 458fefb shell input tap 800 2100 
+submit
 date +%M:%S:%N
-# keep submiting order 2 times
+# keep submiting order 9 times
 
-sleep 0.9
+sleep 0.3
 i=0 
 
-while [ $i -lt 2 ] 
+while [ $i -lt 5 ] 
 do 
-adb -s 458fefb shell input tap 800 2300 
+order
 i=$[$i+1]
 done
 
